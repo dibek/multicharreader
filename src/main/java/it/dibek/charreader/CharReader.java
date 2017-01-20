@@ -22,6 +22,8 @@ public class CharReader {
 
     private Map<String,Integer> mapWords;
 
+
+
     public CharReader(CharacterReader characterReader) {
         this.characterReader = characterReader;
         this.binaryTree = new BinaryTree<>();
@@ -29,7 +31,7 @@ public class CharReader {
     }
 
 
-    void populateInfoMap(){
+    String[] populateArrayWords(){
 
 
         StringBuilder stringBuilder = new StringBuilder();
@@ -42,7 +44,15 @@ public class CharReader {
                   nextChar = characterReader.getNextChar();
               }
               if (stringBuilder.length() > 0) {
-                  binaryTree.addObject(stringBuilder.toString().hashCode(), stringBuilder.toString());
+                  String word = stringBuilder.toString();
+                  binaryTree.addObject(word);
+                  if (mapWords.containsKey(word)) {
+                      Integer count = mapWords.get(word) + 1;
+                      mapWords.replace(word,count);
+                  }
+                  else {
+                      mapWords.put(word,1);
+                  }
                   countWord.incrementAndGet();
               }
               stringBuilder = new StringBuilder();
@@ -52,9 +62,11 @@ public class CharReader {
         catch (EndOfStreamException ex) {
 
         }
-        String[] sortArray = new String[countWord.get()];
-        String[] arrayWord = binaryTree.getIndexReverseSorted(null, sortArray,countWord.get(),"");
-        this.size = arrayWord.length;
+        String[] sortArray = new String[mapWords.keySet().size()];
+        Node nodeToVisit = binaryTree.findNode(-1);
+        binaryTree.getIndexReverseSorted(nodeToVisit, sortArray,sortArray.length-1,"");
+        this.size = sortArray.length;
+        return sortArray;
     }
 
     int getSize(){

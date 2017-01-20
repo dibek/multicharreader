@@ -25,10 +25,23 @@ class CharReaderSpec extends Specification {
         given:
             CharacterReader characterReader = new SimpleCharacterReader()
             CharReader charReader = new CharReader(characterReader)
-            charReader.populateInfoMap()
+            charReader.populateArrayWords()
         expect:
 
         charReader.getSize() > 0
+
+    }
+
+    def 'return array with all words' (){
+        given:
+            CharacterReader characterReader = new SimpleCharacterReader()
+            CharReader charReader = new CharReader(characterReader)
+        when:
+         String[] resultArray = charReader.populateArrayWords()
+
+        then:
+            resultArray[resultArray.length-1] != null
+
 
     }
 }
