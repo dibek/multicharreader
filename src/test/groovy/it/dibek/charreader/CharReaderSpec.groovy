@@ -2,6 +2,7 @@ package it.dibek.charreader
 
 import it.dibek.charreader.reader.CharacterReader
 import it.dibek.charreader.reader.SimpleCharacterReader
+import javafx.collections.transformation.SortedList
 import spock.lang.Specification
 
 /**
@@ -41,6 +42,7 @@ class CharReaderSpec extends Specification {
 
         then:
             resultArray[resultArray.length-1] != null
+
 
 
     }

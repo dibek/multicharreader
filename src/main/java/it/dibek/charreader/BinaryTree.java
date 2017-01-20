@@ -1,6 +1,8 @@
 package it.dibek.charreader;
 
-public class BinaryTree<T> {
+import java.util.Comparator;
+
+public class BinaryTree<T extends Comparable> {
 
     Node root;
 
@@ -18,7 +20,7 @@ public class BinaryTree<T> {
             node = this.root;
         }
 
-        if (key < node.key) {
+        if (value.compareTo(node.value) > 0) {
       if (node.leftChild != null) {
         addNode(node.leftChild, key,value);
       } else {
@@ -26,7 +28,7 @@ public class BinaryTree<T> {
             + node.key);
         node.leftChild = new Node(key, "leftOf" + node.key,value);
       }
-    } else if (key > node.key) {
+    } else if (value.compareTo(node.value) < 0) {
       if (node.rightChild != null) {
         addNode(node.rightChild, key,value);
       } else {
@@ -185,7 +187,7 @@ public class BinaryTree<T> {
     }
 }
 
-class Node<T> {
+class Node<T extends Comparable> {
 
     int key;
     String name;

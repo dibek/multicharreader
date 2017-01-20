@@ -14,11 +14,13 @@ public class CharReader {
 
 
     private static final char WORD_SPACE_SEPARATOR = ' ';
+    private static final char SYMBOL_COMMA = ',';
+    private static final char SYMBOL_DOT = '.' ;
     private CharacterReader characterReader;
 
     private int size;
 
-    private BinaryTree<String> binaryTree;
+    private BinaryTree<WordCounter> binaryTree;
 
     private Map<String,Integer> mapWords;
 
@@ -31,7 +33,7 @@ public class CharReader {
     }
 
 
-    String[] populateArrayWords(){
+    WordCounter[] populateArrayWords(){
 
 
         StringBuilder stringBuilder = new StringBuilder();
@@ -39,20 +41,22 @@ public class CharReader {
         try {
             char nextChar = characterReader.getNextChar();
           while(true) {
-              while (nextChar != WORD_SPACE_SEPARATOR) {
+              while (nextChar != WORD_SPACE_SEPARATOR && nextChar != SYMBOL_COMMA && nextChar != SYMBOL_DOT) {
                   stringBuilder.append(nextChar);
                   nextChar = characterReader.getNextChar();
               }
               if (stringBuilder.length() > 0) {
-                  String word = stringBuilder.toString();
-                  binaryTree.addObject(word);
+                  String word = stringBuilder.toString().trim();
+
                   if (mapWords.containsKey(word)) {
                       Integer count = mapWords.get(word) + 1;
                       mapWords.replace(word,count);
+
                   }
                   else {
                       mapWords.put(word,1);
                   }
+
                   countWord.incrementAndGet();
               }
               stringBuilder = new StringBuilder();
@@ -62,7 +66,11 @@ public class CharReader {
         catch (EndOfStreamException ex) {
 
         }
-        String[] sortArray = new String[mapWords.keySet().size()];
+        for (Map.Entry<String,Integer> entry: mapWords.entrySet()) {
+            WordCounter wordCounter   = new WordCounter(entry.getKey(),entry.getValue());
+            binaryTree.addObject(wordCounter);
+        }
+        WordCounter[] sortArray = new WordCounter[mapWords.keySet().size()];
         Node nodeToVisit = binaryTree.findNode(-1);
         binaryTree.getIndexReverseSorted(nodeToVisit, sortArray,sortArray.length-1,"");
         this.size = sortArray.length;
@@ -74,4 +82,28 @@ public class CharReader {
     }
 
 
+    private class WordCounter implements Comparable<WordCounter>{
+
+        private String word;
+        private int count;
+
+
+        public WordCounter(String word, int count) {
+            this.word = word;
+            this.count = count;
+        }
+
+        @Override
+        public int compareTo(WordCounter o) {
+            return this.word.compareTo(o.word);
+        }
+
+        @Override
+        public String toString() {
+            return "WordCounter{" +
+                    "word='" + word + '\'' +
+                    ", count=" + count +
+                    '}';
+        }
+    }
 }
