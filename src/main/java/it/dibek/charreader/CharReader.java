@@ -72,7 +72,7 @@ public class CharReader {
         }
         WordCounter[] sortArray = new WordCounter[mapWords.keySet().size()];
         Node nodeToVisit = binaryTree.findNode(-1);
-        binaryTree.getIndexReverseSorted(nodeToVisit, sortArray,sortArray.length-1,"");
+        binaryTree.getIndexSorted(nodeToVisit, sortArray,sortArray.length-1,"");
         this.size = sortArray.length;
         return sortArray;
     }

@@ -1,7 +1,5 @@
 package it.dibek.charreader;
 
-import java.util.Comparator;
-
 public class BinaryTree<T extends Comparable> {
 
     Node root;
@@ -82,7 +80,7 @@ public class BinaryTree<T extends Comparable> {
     // Recursion is used to go to one node and
     // then go to its child nodes and so forth
 
-    public void getIndexReverseSorted(Node<T> focusNode, T[] sortArray, int countItem, String nodeVisited) {
+    public void getIndexSorted(Node<T> focusNode, T[] sortArray, int countItem, String nodeVisited) {
 
 
 
@@ -90,9 +88,10 @@ public class BinaryTree<T extends Comparable> {
 
         if (focusNode != null) {
 
-            // Traverse the left node
+            // Traverse the right node
+            getIndexSorted(focusNode.rightChild ,sortArray,countItem,nodeVisited);
 
-            getIndexReverseSorted(focusNode.leftChild,sortArray,countItem,nodeVisited);
+
 
             // Visit the currently focused on node
 
@@ -100,7 +99,9 @@ public class BinaryTree<T extends Comparable> {
 
             sortArray[countItem--] = focusNode.value;
 
-            getIndexReverseSorted(focusNode.rightChild ,sortArray,countItem,nodeVisited);
+            // Traverse the left node
+
+            getIndexSorted(focusNode.leftChild,sortArray,countItem,nodeVisited);
 
 
         }
