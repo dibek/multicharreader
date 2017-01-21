@@ -12,9 +12,6 @@ import java.util.concurrent.locks.ReentrantLock;
  */
 public class MultipleCharReader {
 
-    private static final char WORD_SPACE_SEPARATOR = ' ';
-    private static final char SYMBOL_COMMA = ',';
-    private static final char SYMBOL_DOT = '.';
     private CharacterReader[] characterReaders;
 
     public MultipleCharReader(CharacterReader[] characterReaders) {
