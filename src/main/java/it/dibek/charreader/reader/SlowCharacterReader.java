@@ -29,7 +29,7 @@ public class SlowCharacterReader implements CharacterReader {
     public char getNextChar() {
 
         try {
-            Thread.sleep(random.nextInt(200));
+            Thread.sleep(random.nextInt(20));
         } catch (InterruptedException e) {/*carry on*/}
 
         if(position >= CONTENT.length())

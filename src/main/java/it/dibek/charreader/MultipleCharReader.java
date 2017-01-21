@@ -35,17 +35,13 @@ public class MultipleCharReader {
                 System.out.println("Start thread ");
                 executor.submit(() -> {
                     CharReader charReader = new CharReader(characterReader);
-                    combinedWordCounter[arrayIndexAtomic.decrementAndGet()] = charReader.populateArrayWordsWithLatch(latch);
+                    charReader.populateArrayWordsWithLatch(combinedWordCounter, arrayIndexAtomic,latch);
                 });
             } catch (InterruptedException e) {
                 e.printStackTrace();
             }
         }
         try {
-            if (latch.getCount() == 1){
-                latch.countDown();
-            }
-
             latch.await();
         }catch (InterruptedException e) {
             e.printStackTrace();

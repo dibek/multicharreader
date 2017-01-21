@@ -42,11 +42,11 @@ public class CharReader {
      * @param latch
      * @return
      */
-    WordCounter[] populateArrayWordsWithLatch(CountDownLatch latch){
+    void populateArrayWordsWithLatch(WordCounter[][] combinedWordCounter, AtomicInteger arrayIndexAtomic,CountDownLatch latch){
         WordCounter[] wordCounters = this.populateArrayWords();
+        combinedWordCounter[arrayIndexAtomic.decrementAndGet()] = wordCounters;
+        System.out.println("latch counter before countdown: " + latch.getCount());
         latch.countDown();
-        System.out.println("latch counter: " + latch.getCount());
-        return wordCounters;
     }
 
     /**
