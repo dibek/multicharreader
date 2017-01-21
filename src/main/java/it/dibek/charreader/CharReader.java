@@ -5,6 +5,7 @@ import it.dibek.charreader.reader.CharacterReader;
 
 import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
+import java.util.concurrent.CountDownLatch;
 import java.util.concurrent.atomic.AtomicInteger;
 
 /**
@@ -16,6 +17,7 @@ public class CharReader {
     private static final char WORD_SPACE_SEPARATOR = ' ';
     private static final char SYMBOL_COMMA = ',';
     private static final char SYMBOL_DOT = '.' ;
+    private static final char SYMBOL_CR = '\n' ;
     private CharacterReader characterReader;
 
     private int size;
@@ -25,41 +27,48 @@ public class CharReader {
     private Map<String,Integer> mapWords;
 
 
-
+    /**
+     * A simple class to estract from a stream words and ordering them with a basic binarytree
+     * @param characterReader
+     */
     public CharReader(CharacterReader characterReader) {
         this.characterReader = characterReader;
         this.binaryTree = new BinaryTree<>();
         this.mapWords = new ConcurrentHashMap<>();
     }
 
+    /**
+     * A wrapper to execute the extraction in a multithreading environment
+     * @param latch
+     * @return
+     */
+    WordCounter[] populateArrayWordsWithLatch(CountDownLatch latch){
+        WordCounter[] wordCounters = this.populateArrayWords();
+        latch.countDown();
+        System.out.println("latch counter: " + latch.getCount());
+        return wordCounters;
+    }
 
-    WordCounter[] populateArrayWords(){
-
-
-        StringBuilder stringBuilder = new StringBuilder();
+    /**
+     * A method to extract the words from the stream and put them in a sorted array using a binarytree
+      * @return
+     */
+    WordCounter[]  populateArrayWords(){
+        StringBuffer stringBuffer = new StringBuffer();
         AtomicInteger countWord = new AtomicInteger();
         try {
             char nextChar = characterReader.getNextChar();
           while(true) {
-              while (nextChar != WORD_SPACE_SEPARATOR && nextChar != SYMBOL_COMMA && nextChar != SYMBOL_DOT) {
-                  stringBuilder.append(nextChar);
+              while (nextChar != WORD_SPACE_SEPARATOR && nextChar != SYMBOL_COMMA && nextChar != SYMBOL_DOT && nextChar != SYMBOL_CR) {
+                  stringBuffer.append(nextChar);
                   nextChar = characterReader.getNextChar();
               }
-              if (stringBuilder.length() > 0) {
-                  String word = stringBuilder.toString().trim();
-
-                  if (mapWords.containsKey(word)) {
-                      Integer count = mapWords.get(word) + 1;
-                      mapWords.replace(word,count);
-
-                  }
-                  else {
-                      mapWords.put(word,1);
-                  }
-
+              if (stringBuffer.length() > 0) {
+                  String word = stringBuffer.toString().trim();
+                  countOccurenceWord(word);
                   countWord.incrementAndGet();
               }
-              stringBuilder = new StringBuilder();
+              stringBuffer = new StringBuffer();
               nextChar = characterReader.getNextChar();
           }
         }
@@ -72,9 +81,22 @@ public class CharReader {
         }
         WordCounter[] sortArray = new WordCounter[mapWords.keySet().size()];
         Node nodeToVisit = binaryTree.findNode(-1);
-        binaryTree.getIndexSorted(nodeToVisit, sortArray,sortArray.length-1,"");
+        binaryTree.collectSortedAlphaNumeric(nodeToVisit, sortArray,sortArray.length-1,"");
         this.size = sortArray.length;
+        for (WordCounter wordCounter: sortArray) {
+            System.out.println(wordCounter);
+        }
         return sortArray;
+    }
+
+    private void countOccurenceWord(String word) {
+        if (mapWords.containsKey(word)) {
+            Integer count = mapWords.get(word) + 1;
+            mapWords.replace(word,count);
+        }
+        else {
+            mapWords.put(word,1);
+        }
     }
 
     int getSize(){
@@ -82,28 +104,6 @@ public class CharReader {
     }
 
 
-    private class WordCounter implements Comparable<WordCounter>{
 
-        private String word;
-        private int count;
-
-
-        public WordCounter(String word, int count) {
-            this.word = word;
-            this.count = count;
-        }
-
-        @Override
-        public int compareTo(WordCounter o) {
-            return this.word.compareTo(o.word);
-        }
-
-        @Override
-        public String toString() {
-            return "WordCounter{" +
-                    "word='" + word + '\'' +
-                    ", count=" + count +
-                    '}';
-        }
-    }
 }
+

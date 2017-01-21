@@ -22,16 +22,14 @@ public class BinaryTree<T extends Comparable> {
       if (node.leftChild != null) {
         addNode(node.leftChild, key,value);
       } else {
-        System.out.println("  Inserted " + key + " to left of "
-            + node.key);
+        //System.out.println("  Inserted " + key + " to left of "+ node.key);
         node.leftChild = new Node(key, "leftOf" + node.key,value);
       }
     } else if (value.compareTo(node.value) < 0) {
       if (node.rightChild != null) {
         addNode(node.rightChild, key,value);
       } else {
-        System.out.println("  Inserted "  + key + " to right of "
-            + node.key);
+        //System.out.println("  Inserted "  + key + " to right of " + node.key);
         node.rightChild = new Node(key, "rightOf" + node.key,value);
       }
     }
@@ -79,34 +77,30 @@ public class BinaryTree<T extends Comparable> {
     // All nodes are visited in ascending order
     // Recursion is used to go to one node and
     // then go to its child nodes and so forth
-
-    public void getIndexSorted(Node<T> focusNode, T[] sortArray, int countItem, String nodeVisited) {
-
-
-
-
-
+    // because the array is reversed it will contain the nodes in alphanumeric order and reversed count order
+    public int collectSortedAlphaNumeric(Node<T> focusNode, T[] sortArray, int countItem, String nodeVisited) {
         if (focusNode != null) {
 
-            // Traverse the right node
-            getIndexSorted(focusNode.rightChild ,sortArray,countItem,nodeVisited);
+            // Traverse the left node
 
+            countItem = collectSortedAlphaNumeric(focusNode.leftChild,sortArray,countItem,nodeVisited);
 
 
             // Visit the currently focused on node
 
-            System.out.println(focusNode);
+            //System.out.println(focusNode);
+
 
             sortArray[countItem--] = focusNode.value;
 
-            // Traverse the left node
 
-            getIndexSorted(focusNode.leftChild,sortArray,countItem,nodeVisited);
+            // Traverse the right node
+            countItem = collectSortedAlphaNumeric(focusNode.rightChild ,sortArray,countItem,nodeVisited);
 
 
         }
 
-
+        return countItem;
 
     }
     public String preorderTraverseTree(Node focusNode) {
