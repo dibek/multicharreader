@@ -30,7 +30,7 @@ class CharReaderSpec extends Specification {
             charReader.populateArrayWords()
         expect:
 
-        charReader.getSize() > 0
+            charReader.getSize() > 0
 
     }
 
@@ -48,20 +48,33 @@ class CharReaderSpec extends Specification {
 
     }
 
-    def 'return array with all words and counters with reverse counter order' (){
+    def 'return array with all words and counters with reverse counter sorting' (){
         given:
             CharacterReader characterReader = new SimpleCharacterReader()
             CharReader charReader = new CharReader(characterReader)
         when:
             WordCounter[] resultArray = charReader.populateArrayWords()
-
         then:
-
             resultArray[0] != null
             resultArray[0].getCount() == 18
             resultArray[0].word.equals('the')
-
     }
 
+
+    def 'call twice the populateArrayWords do not change the result'() {
+        given:
+            CharacterReader characterReader = new SimpleCharacterReader()
+            CharReader charReader = new CharReader(characterReader)
+        when:
+            WordCounter[] resultArray = charReader.populateArrayWords()
+            WordCounter[] resultArray2 = charReader.populateArrayWords()
+        then:
+            resultArray[0] != null
+            resultArray[0].getCount() == 18
+            resultArray[0].word.equals('the')
+            resultArray2[0] != null
+            resultArray2[0].getCount() == 18
+            resultArray2[0].word.equals('the')
+    }
 
 }
