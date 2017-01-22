@@ -42,7 +42,7 @@ class CharReaderSpec extends Specification {
          WordCounter[] resultArray = charReader.populateArrayWords()
 
         then:
-            resultArray.length == 88
+            resultArray.length == 89
             resultArray[resultArray.length-1] != null
             resultArray[0] != null
 

@@ -24,7 +24,7 @@ jar {
         attributes(
                 "Implementation-Title": project.name,
                 "Implementation-Version": version,
-                "Main-Class": "org.dibek.charreader.CharReader",
+                "Main-Class": "it.dibek.charreader.CharReader",
                 "Class-Path": configurations.compile.collect { it.getName() }.join(' ')
         )
 

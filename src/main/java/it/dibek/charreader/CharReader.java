@@ -2,8 +2,10 @@ package it.dibek.charreader;
 
 import it.dibek.charreader.exception.EndOfStreamException;
 import it.dibek.charreader.reader.CharacterReader;
+import it.dibek.charreader.reader.PromptCharacterReader;
 
 import java.util.Map;
+import java.util.Scanner;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.CountDownLatch;
 import java.util.concurrent.atomic.AtomicInteger;
@@ -58,9 +60,14 @@ public class CharReader {
         try {
             char nextChar = characterReader.getNextChar();
             while (true) {
-                while (Character.isAlphabetic(nextChar)) {
-                    stringBuffer.append(nextChar);
-                    nextChar = characterReader.getNextChar();
+                bufferRead: while (Character.isAlphabetic(nextChar)) {
+                    try {
+                        stringBuffer.append(nextChar);
+                        nextChar = characterReader.getNextChar();
+                    } catch (EndOfStreamException ex) {
+                        System.out.println("End of stream");
+                        break bufferRead;
+                    }
                 }
                 if (stringBuffer.length() > 0) {
                     String word = stringBuffer.toString().trim();
@@ -71,7 +78,7 @@ public class CharReader {
                 nextChar = characterReader.getNextChar();
             }
         } catch (EndOfStreamException ex) {
-
+            System.out.println("End of stream");
         }
         for (Map.Entry<String, Integer> entry : mapWords.entrySet()) {
             WordCounter wordCounter = new WordCounter(entry.getKey(), entry.getValue());
@@ -101,5 +108,18 @@ public class CharReader {
     }
 
 
+    public static void main(String[] args) {
+        String promptContent = "";
+        Scanner reader = new Scanner(System.in);
+        if (args.length == 0) {
+            System.out.println("Enter a list of words: ");
+            promptContent = reader.nextLine();
+        } else {
+            promptContent = args[0];
+        }
+        PromptCharacterReader promptCharacterReader = new PromptCharacterReader(promptContent);
+        CharReader charReader = new CharReader(promptCharacterReader);
+        System.out.println("List words sorted for counter and alphabetically" + charReader.populateArrayWords());
+    }
 }
 
